@@ -1,10 +1,18 @@
 """Provider SPI module."""
 
-from srtrsh_prompt_engine.spi.generic_llm import GenericLLMProvider
+from srtrsh_prompt_engine.spi.generic_llm import (
+    GenericLLMProvider,
+    normalize_http_error,
+)
 from srtrsh_prompt_engine.spi.mock_provider import MockProvider
 from srtrsh_prompt_engine.spi.provider import (
     HydratedPrompt,
+    LLMResponse,
+    NormalizedError,
+    NormalizedInteractionOutput,
+    NormalizedOperationCall,
     ProviderCapabilities,
+    ProviderErrorCategory,
     ProviderExecutionRequest,
     ProviderExecutionResponse,
     ProviderSPI,
@@ -17,7 +25,13 @@ __all__ = [
     "HydratedPrompt",
     "ProviderExecutionRequest",
     "ProviderExecutionResponse",
+    "LLMResponse",
+    "NormalizedOperationCall",
+    "NormalizedInteractionOutput",
+    "NormalizedError",
+    "ProviderErrorCategory",
     "MockProvider",
     "GenericLLMProvider",
     "ProviderRegistry",
+    "normalize_http_error",
 ]
