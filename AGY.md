@@ -29,6 +29,23 @@ It MUST NOT:
 
 Communication Backend is the Host Service. Prompt Engine returns structured outcomes/operation identifiers according to the contract; Communication Backend authorizes and executes permitted business operations.
 
+### Capabilities vs. Prompts & Prompt Isolation
+
+- **Platform Code vs. Prompt Administration:** This repository implements domain-agnostic engine capabilities, session persistence, Provider SPI integrations, variable readiness, and structured interaction execution. Authoring and tuning actual prompt texts is an administrative responsibility performed via the administrative control plane.
+- **Prompt Isolation Invariant:** Routine coding agents implementing engine features MUST NOT demand access to live prompt texts, production personas, or customer conversation transcripts. Technical contracts, schemas, and synthetic test fixtures are the complete requirement for implementation.
+
+### Dynamic Operation Dispatch & Incremental Catalog Compilation
+
+- Prompt Engine exposes available conversational operations to the model via the Endpoint Catalog compiled for the active session context.
+- Operations are selected dynamically by the LLM at runtime; this repository does not contain static call sites for host business operations.
+- Coding agents MUST NOT declare an operation obsolete or dead merely because static code references are absent.
+- When supporting operations in the catalog or execution loop, implement them incrementally according to the approved technical contract; do not demand exhaustive future business workflows.
+
+### Routine Development vs. Dedicated System Audits
+
+- Routine engine tasks focus strictly on the platform service, Provider SPI, and canonical contracts.
+- Evaluating operation deprecation, catalog redundancy, or prompt retirement belongs to dedicated, explicitly scoped system audits equipped with external audit telemetry and prompt revision history. Conflating routine implementation with system auditing is prohibited.
+
 ## Technology stack and host constraints
 
 This repository currently uses Python >=3.12, FastAPI, Pydantic, pytest/pytest-asyncio and a `src/` package layout, as declared in `pyproject.toml`. Preserve these conventions unless an approved specification or explicit human instruction requires a change.
