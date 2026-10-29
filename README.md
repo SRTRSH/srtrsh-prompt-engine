@@ -4,19 +4,41 @@ The Prompt Engine is a standalone, domain-agnostic platform service responsible 
 
 ## Architecture
 
-The canonical pipeline is:
+Prompt Engine operates within the canonical closed-loop conversational pipeline:
 ```text
-Person → Bot → Communication Channel → Channel Adapter → Prompt Engine → Appropriate Backend
+Person / Bot
+    ↓
+Communication Channel (e.g. Telegram)
+    ↓
+Channel Adapter (Thin Protocol Adapter)
+    ↓
+Communication Backend (Host Service)
+    ↓
+Prompt Engine (Domain-Agnostic LLM Transformation)
+    ↓
+operationId / outcome
+    ↓
+Communication Backend (executes operation against shared database)
+    ↓
+result
+    ↓
+Prompt Engine
+    ↓
+Communication Backend
+    ↓
+Channel Adapter
+    ↓
+Person
 ```
 
 The Prompt Engine:
-- Accepts `promptIdentity`, `rawInput`, and `runtimeContext`.
+- Sits between Communication Backend (its sole Host Service) and LLM providers via Provider SPI.
+- Authoritatively owns AI Sessions, conversation history, and execution context.
 - Resolves immutable Prompt Versions identified by RFC 8785 (JCS) SHA-256 `PromptVersionHash`.
-- Binds runtime variables and evaluates readiness:
-  - If required variables are missing: returns `isReady = false` with `missingVariables = [...]` without invoking LLM providers.
-  - If all required variables are resolved: returns `isReady = true`, invokes the configured provider via the Provider SPI, and validates output against `SchemaContract` (JSON Schema).
-- Exposes transport-neutral Resolver API (`POST /v1/resolver/resolve-and-execute`, `POST /v1/resolver/resolve`, `POST /v1/resolver/execute`).
-- Remains strictly domain-agnostic, with no dependencies on client business entities, business rules, or direct database ownership of business backends.
+- Binds runtime variables and evaluates readiness before invoking LLM providers.
+- Exposes Runtime API endpoints (`/v1/runtime/execute`, `/v1/runtime/interaction`) and Localization API endpoints.
+- Returns structured outcomes (`NEEDS_USER_INPUT`, `CALL_OPERATION`, `COMPLETED`, `CONFIRMATION_REQUIRED`, `ERROR`) to Communication Backend.
+- Remains strictly domain-agnostic, with no dependencies on client business entities, business rules, or direct database ownership of business backends. Channel Adapters and downstream business backends do not call Prompt Engine directly.
 
 ## Getting Started
 
